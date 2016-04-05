@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'producthunt/data/version'
+require 'producthuntdata/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "producthunt-data"
-  spec.version       = Producthunt::Data::VERSION
+  spec.name          = "producthuntdata"
+  spec.version       = Producthuntdata::VERSION
   spec.authors       = ["Pierre-Jean Bergeron"]
   spec.email         = ["pierrejeanbergeron@gmail.com"]
 
