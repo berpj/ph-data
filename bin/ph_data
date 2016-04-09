@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+
+require 'ph_data'
+
+@usage = "Usage: ph_data (posts | topics ) > output_file"
+
+if ARGV.empty?
+  puts @usage
+  exit 1
+end
+
+if ARGV[0] == 'topics'
+  PhData.get_topics()
+elsif ARGV[0] == 'posts'
+  PhData.get_posts()
+end
