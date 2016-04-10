@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Product Hunt Data</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="./font.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.0.0-beta2/Chart.min.js"></script>
+  <style>
+
+  html {
+    padding: 50px;
+    padding-bottom: 0;
+    width: 100%;
+  }
+
+  body {
+    text-align: center;
+    font-family: "Proxima Nova";
+  }
+
+  .container {
+    width: 880px !important;
+  }
+
+  .fa {
+    color: #da552f;
+  }
+
+  h1 {
+    font-weight: 600 !important;
+  }
+
+  #date {
+    margin-top: 0;
+    color: #666;
+  }
+
+  #social {
+    margin-top: 60px;
+  }
+
+  #github {
+    margin-left: 30px;
+  }
+
+  h2 {
+    margin-bottom: 30px;
+    font-size: 1.7em;
+  }
+
+  canvas {
+    margin-top: 85px;
+    margin-bottom: 20px;
+  }
+
+  ul {
+    max-width: 60%;
+    margin: auto;
+    margin-bottom: 25px;
+    margin-top: 0;
+    padding-top: 0;
+    text-align: center;
+  }
+
+  #footer {
+    margin-top: 100px;
+  }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1><i class="fa fa-product-hunt"></i> Product Hunt Data</h1>
+    <p id="date">Last updated on 10/04/2016.</p>
+
+    <p id="social">
+      <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://ph-data.bergeron.io" data-via="berpj">Tweet</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+      <iframe id="github" src="https://ghbtns.com/github-btn.html?user=berpj&repo=ph-data&type=star&count=false" frameborder="0" scrolling="0" width="60px" height="20px"></iframe>
+    </p>
+
+    <canvas id="topicsBar" width="800" height="500"></canvas>
+
+    <h2>Most popular topics</h2>
+
+    <script>
+    $(function($){
+      $.get('./data/analytics_topics', function(data) {
+        var lines = data.split("\n");
+
+        var labels = lines[0].split(',');
+        var data = lines[1].split(',');
+        var data2 = lines[2].split(',');
+
+        labels = labels.slice(7);
+        data = data.slice(7);
+        data2 = data2.slice(7);
+
+        let chartOptions = {
+          'legend': {'position': 'bottom'},
+          "scales": {
+          "yAxes": [{
+            "id": "products",
+            "ticks": {
+              "max": 600,
+              "beginAtZero": true
+            },
+             "position": "right"
+           }, {
+             "id": "followers",
+             "ticks": {
+               "max": 6000,
+               "beginAtZero": true
+             },
+             "position": "left",
+             'type': 'linear'
+           }]
+         } }
+
+        let chartData = {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Followers',
+              backgroundColor: "rgba(151,187,205,1)",
+              fill: false,
+              data: data2,
+              yAxisID: 'followers'
+            },
+            {
+              label: 'Products',
+              backgroundColor: "#e37753",
+              fill: false,
+              data: data,
+              yAxisID: 'products'
+            }
+          ]
+        };
+
+        let ctx = $("#topicsBar").get(0).getContext("2d");
+
+        let myLineChart = new Chart(ctx, { type: 'bar', data: chartData, options: chartOptions });
+      });
+    });
+    </script>
+
+    <canvas id="numberOfProductsPerMonth" width="800" height="500"></canvas>
+
+    <h2>Number of products and votes per month</h2>
+
+    <script>
+    $(function($){
+      $.get('./data/analytics_posts', function(data) {
+        var lines = data.split("\n");
+
+        var labels = lines[0].split(',');
+        var data = lines[1].split(',');
+        var data2 = lines[2].split(',');
+
+        let chartOptions = {
+          'legend': {'position': 'bottom'},
+          "scales": {
+          "yAxes": [{
+            "id": "products",
+            "ticks": {
+              "max": 2000,
+              "beginAtZero": true
+            },
+             "position": "left"
+           }, {
+             "id": "votes",
+             "ticks": {
+               "max": 200000,
+               "beginAtZero": true
+             },
+             "position": "right",
+             'type': 'linear'
+           }]
+         } }
+
+        let chartData = {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Products',
+              backgroundColor: "#e37753",
+              fill: false,
+              data: data,
+              yAxisID: 'products',
+              type: 'bar'
+            },
+            {
+              label: 'Votes',
+              backgroundColor: "rgba(151,187,205,1)",
+              fill: false,
+              data: data2,
+              yAxisID: 'votes',
+              type: 'line'
+            }
+          ]
+        };
+
+        let ctx = $("#numberOfProductsPerMonth").get(0).getContext("2d");
+
+        let myLineChart = new Chart(ctx, { type: 'bar', data: chartData, options: chartOptions });
+      });
+    });
+    </script>
+
+    <canvas id="numberOfProductsPerDay" width="800" height="500"></canvas>
+
+    <h2>Number of products and votes per day</h2>
+
+    <script>
+    $(function($){
+      $.get('./data/analytics_posts_day', function(data) {
+        var lines = data.split("\n");
+
+        var labels = lines[0].split(',');
+        var data = lines[1].split(',');
+        var data2 = lines[2].split(',');
+
+        let chartData = {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Products',
+              backgroundColor: "#e37753",
+              fill: false,
+              data: data,
+              yAxisID: 'products'
+            },
+            {
+              label: 'Votes',
+              backgroundColor: "rgba(151,187,205,1)",
+              fill: false,
+              data: data2,
+              yAxisID: 'votes'
+            }
+          ]
+        };
+
+        let chartOptions = {
+          'legend': {'position': 'bottom'},
+          "scales": {
+          "yAxes": [{
+            "id": "products",
+            "ticks": {
+              "max": 7000,
+              "beginAtZero": true
+            },
+             "position": "left"
+           }, {
+             "id": "votes",
+             "ticks": {
+               "max": 700000,
+               "beginAtZero": true
+             },
+             "position": "right",
+             'type': 'linear'
+           }]
+         } }
+
+        let ctx = $("#numberOfProductsPerDay").get(0).getContext("2d");
+
+        let myLineChart = new Chart(ctx, { type: 'bar', data: chartData, options: chartOptions });
+      });
+    });
+    </script>
+
+    <canvas id="numberOfProductsPerHour" width="800" height="500"></canvas>
+
+    <h2>Number of products and votes per hour (PST time)</h2>
+
+    <script>
+    $(function($){
+      $.get('./data/analytics_posts_hour', function(data) {
+        var lines = data.split("\n");
+
+        var labels = lines[0].split(',');
+        var data = lines[1].split(',');
+        var data2 = lines[2].split(',');
+
+        let chartData = {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Products',
+              backgroundColor: "#e37753",
+              fill: false,
+              data: data,
+              yAxisID: 'products',
+              type: 'bar'
+            },
+            {
+              label: 'Votes',
+              backgroundColor: "rgba(151,187,205,1)",
+              fill: false,
+              data: data2,
+              yAxisID: 'votes',
+              type: 'line'
+            }
+          ]
+        };
+
+        let chartOptions = {
+          'legend': {'position': 'bottom'},
+          "scales": {
+          "yAxes": [{
+            "id": "products",
+            "ticks": {
+              "max": 5000,
+              "beginAtZero": true
+            },
+             "position": "left"
+           }, {
+             "id": "votes",
+             "ticks": {
+               "max": 600000,
+               "beginAtZero": true
+             },
+             "position": "right",
+             'type': 'linear'
+           }]
+         } }
+
+        let ctx = $("#numberOfProductsPerHour").get(0).getContext("2d");
+
+        let myLineChart = new Chart(ctx, { type: 'bar', data: chartData, options: chartOptions });
+      });
+    });
+    </script>
+
+    <canvas id="platformsPie" width="800" height="500"></canvas>
+
+    <h2>Main platforms</h2>
+
+    <script>
+    $(function($){
+      $.get('./data/analytics_platforms', function(data) {
+        var lines = data.split("\n");
+
+        var labels = lines[0].split(',');
+        var data = lines[1].split(',');
+
+        let chartOptions = {
+          'legend': {'position': 'bottom'}
+        }
+
+        let chartData = {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Products',
+              fill: false,
+              data: data,
+              backgroundColor: [
+                  "#e37753",
+                  "#46BFBD",
+                  "#A4C639",
+                  '#555555',
+                  '#DDDDDD',
+                  '#2E8DEF',
+                  '#FDB45C',
+                  'pink'
+              ]
+            }
+          ]
+        };
+
+      let ctx = $("#platformsPie").get(0).getContext("2d");
+
+      let myLineChart = new Chart(ctx, { type: 'pie', data: chartData, options: chartOptions });
+
+
+
+      });
+    });
+    </script>
+
+    <p id="footer">
+      Data from the Product Hunt <a href="https://api.producthunt.com/v1/docs">API</a>.<br>
+      Made by <a href="https://bergeron.io">Pierre-Jean Bergeron</a>.
+    </p>
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-28397864-23', 'auto');
+  ga('send', 'pageview');
+
+  </script>
+</body>
+</html>

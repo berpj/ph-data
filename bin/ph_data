@@ -2,15 +2,25 @@
 
 require 'ph_data'
 
-@usage = "Usage: ph_data (posts | topics ) > output_file"
+@usage = "Usage: ph_data (posts | topics | analytics_posts | analytics_posts_day | analytics_posts_hour | analytics_platforms | analytics_topics ) > output_file"
 
 if ARGV.empty?
   puts @usage
   exit 1
 end
 
-if ARGV[0] == 'topics'
+if ARGV[0] == 'get_topics'
   PhData.get_topics()
-elsif ARGV[0] == 'posts'
+elsif ARGV[0] == 'get_posts'
   PhData.get_posts()
+elsif ARGV[0] == 'analytics_posts'
+  PhData.analytics_posts()
+elsif ARGV[0] == 'analytics_posts_day'
+  PhData.analytics_posts_day()
+elsif ARGV[0] == 'analytics_posts_hour'
+  PhData.analytics_posts_hour()
+elsif ARGV[0] == 'analytics_platforms'
+  PhData.analytics_platforms()
+elsif ARGV[0] == 'analytics_topics'
+  PhData.analytics_topics()
 end

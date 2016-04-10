@@ -1,4 +1,4 @@
-output/*.json
+web/data/*.json
 
 *.gem
 *.rbc
